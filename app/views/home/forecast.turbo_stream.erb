@@ -1,0 +1,58 @@
+<%= turbo_stream.replace "forecast" do %>
+  <%= turbo_frame_tag "forecast" do %>
+    <% if @forecast.present? %>
+      <% current = @forecast[:current] %>
+      <% daily   = @forecast[:daily] %>
+
+      <article>
+        <header>
+          <h2><%= @location %></h2>
+          <p><%= @from_cache ? "⚡ Cached result" : "🔴 Live" %></p>
+        </header>
+
+        <section>
+          <h3>Current conditions</h3>
+          <dl>
+            <dt>Temperature</dt>
+            <dd><%= image_tag weather_image(current["weather_code"]), size: "40x40", alt: weather_description(current["weather_code"]) %> <%= current["temperature_2m"] %>°F</dd>
+
+            <dt>Feels like</dt>
+            <dd><%= current["apparent_temperature"] %>°F</dd>
+
+            <dt>Condition</dt>
+            <dd><%= weather_description(current["weather_code"]) %></dd>
+
+            <dt>Updated</dt>
+            <dd><%= current["time"] %></dd>
+          </dl>
+        </section>
+
+        <section>
+          <h3>7-day forecast</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Condition</th>
+                <th>High</th>
+                <th>Low</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% daily["time"].each_with_index do |date, i| %>
+                <tr>
+                  <td><%= l Date.parse(date) %></td>
+                  <td><%= image_tag weather_image(daily["weather_code"][i]), height: '30px' %> <%= weather_description(daily["weather_code"][i]) %></td>
+                  <td><%= daily["temperature_2m_max"][i] %>°F</td>
+                  <td><%= daily["temperature_2m_min"][i] %>°F</td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </section>
+      </article>
+    <% else %>
+      Forecast data fetch error, please try again!
+    <% end %>
+  <% end %>
+<% end %>

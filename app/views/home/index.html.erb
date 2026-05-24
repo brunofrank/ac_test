@@ -1,2 +1,12 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<%= form_tag forecast_url, method: :post do %>
+  <fieldset>
+    <legend>Search by ZIP code</legend>
+    <%= label_tag :zip, "ZIP" %>
+    <%= text_field_tag :zip, params[:zip], placeholder: "22003", size: 10, maxlength: 10, inputmode: "numeric" %>
+    <%= submit_tag "Get Forecast" %>
+  </fieldset>
+<% end %>
+
+<%= turbo_frame_tag 'forecast' do %>
+No forecast data, please input an address, city or zip to fetch
+<% end %>
