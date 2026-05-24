@@ -1,17 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe GeocodingService do
-  subject(:result) { described_class.call(city: city, state: state) }
+  let(:address) { "4840 Red Fox DrAnnandale, VA 22003" }
 
-  let(:city) { "Chantilly" }
-  let(:state) { "VA" }
+  subject(:result) { described_class.call(address: address) }
 
   describe ".call" do
     context "when geocoder finds coordinates" do
       let(:geocoder_result) { instance_double("Geocoder::Result::Base", coordinates: [-77.4311513, 38.8941543]) }
 
       before do
-        allow(Geocoder).to receive(:search).with("#{city}, #{state}").and_return([geocoder_result])
+        allow(Geocoder).to receive(:search).with(address).and_return([geocoder_result])
       end
 
       it { is_expected.to be_a_success }

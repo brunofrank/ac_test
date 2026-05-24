@@ -1,12 +1,12 @@
 class GeocodingService
   include Interactor
 
-  # > city: String
-  # > state: String
+  # > address: String
   # < latitude
   # < longitude
+  # < geo_data
   def call
-    latitude, longitude = get_coordinates
+    latitude, longitude = coordinates
 
     context.fail!(message: "Place not found") if latitude.blank? || longitude.blank?
 
@@ -16,15 +16,13 @@ class GeocodingService
 
   private
 
-  delegate :city, :state, to: :context
+  delegate :address, to: :context
 
-  def city_with_state
-    [city, state].join(', ')
+  def geo_data
+    context.geo_data = Geocoder.search(address).first
   end
 
-  def get_coordinates
-    results = Geocoder.search(city_with_state)
-
-    results.first&.coordinates
+  def coordinates
+    @coordinates ||= geo_data&.coordinates
   end
 end
